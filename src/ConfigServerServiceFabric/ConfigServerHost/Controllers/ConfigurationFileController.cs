@@ -14,6 +14,8 @@ namespace ConfigServerHost.Controllers
         [HttpGet("{application}/{environment}/{version?}")]
         public async Task<ServiceOperationResult> Get(string application, string environment, string version = "")
         {
+            //TODO: Validar la version del archivo para no descargar a cada momento
+            //TODO: Compatir archivos para entre aplicaciones, para poner configuraciones comunes
             var repository = new ConfigurationFileRepository("Data Source=WAEDRMEX01-2861\\SQLEXPRESS;Initial Catalog=ConfigServer;User ID=configserver;Password=configserver");
             var handler = new QueryConfigurationFileHandler(repository);
             var result = await handler.HandleAsync(new QueryConfigurationFileRequest { ApplicationName = application, Environment = environment });
