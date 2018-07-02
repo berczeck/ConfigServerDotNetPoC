@@ -52,14 +52,14 @@ namespace ConsoleApp
             client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
 
-            var response = client.GetAsync($"http://localhost:63820/v1/demo/dev").Result;
+            var response = client.GetAsync($"http://localhost:8627/v1/API_DEMO/DEV").Result;
 
             var jsonResponse = response.Content.ReadAsStringAsync().Result;
-            var result = JsonConvert.DeserializeObject<List<Response>>(jsonResponse);
+            var result = JsonConvert.DeserializeObject<ServiceOperationResult<List<ConfigurationFileResponse>>>(jsonResponse);
 
-            foreach (var item in result)
+            foreach (var item in result.Value)
             {
-                var path = Path.Combine(GetContentRoot(), item.FileName);
+                var path = Path.Combine(GetContentRoot(), item.Name);
                 using (StreamWriter sw = File.CreateText(path))
                 {
                     sw.WriteLine(item.Content);
@@ -77,9 +77,35 @@ namespace ConsoleApp
         }
     }
 
-    public class Response
+    public class ServiceOperationResult
     {
-        public string FileName { get; set; }
+        public bool Failure { get; set; }
+        public bool Success { get; set; }
+        public List<ServiceError> ErrorList { get; set; }
+
+        public ServiceOperationResult()
+        {
+            ErrorList = new List<ServiceError>();
+        }
+    }
+    public class ServiceOperationResult<T> : ServiceOperationResult
+    {
+        public T Value { get; set; }
+    }
+    public class ServiceError
+    {
+        public string Code { get; set; }
+        public string Message { get; set; }
+    }
+    public class ConfigurationFileResponse
+    {
+        public int Identifier { get; set; }
+        public int ApplicationIdentifier { get; set; }
+        public string Name { get; set; }
+        public bool Enabled { get; set; }
+        public string Version { get; set; }
         public string Content { get; set; }
+        public string Environment { get; set; }
+        public string Extension { get; set; }
     }
 }

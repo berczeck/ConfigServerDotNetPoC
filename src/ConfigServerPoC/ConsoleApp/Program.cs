@@ -11,7 +11,7 @@ namespace ConsoleApp
             string value = "";
             do
             {
-                ApplicationConfig.RegisterConfig("dev");
+                ApplicationConfig.RegisterConfig("API_DEMO", "DEV");
                 var config = ApplicationConfig.Configuration;
                 var section = config.GetSection("application:dataBaseConnection");
 

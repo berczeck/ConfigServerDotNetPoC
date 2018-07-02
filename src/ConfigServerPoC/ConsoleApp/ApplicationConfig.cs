@@ -15,16 +15,16 @@ namespace ConsoleApp
 
         public static IConfiguration Configuration { get; set; }
 
-        public static void RegisterConfig(string environment)
+        public static void RegisterConfig(string applicationName, string environment)
         {
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
 
-            var response = client.GetAsync($"http://localhost:63820/v1/demo/dev").Result;
+            var response = client.GetAsync($"http://localhost:8627/v1/{applicationName}/{environment}").Result;
 
             var jsonResponse = response.Content.ReadAsStringAsync().Result;
-            var result = JsonConvert.DeserializeObject<List<Response>>(jsonResponse);
+            var result = JsonConvert.DeserializeObject<ServiceOperationResult<List<ConfigurationFileResponse>>>(jsonResponse);
 
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
@@ -33,26 +33,26 @@ namespace ConsoleApp
                 //.AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
 
-            foreach (var item in result)
+            foreach (var item in result.Value)
             {
-                var path = Path.Combine(GetContentRoot(), item.FileName);
+                var path = Path.Combine(GetContentRoot(), item.Name);
                 using (StreamWriter sw = File.CreateText(path))
                 {
                     sw.WriteLine(item.Content);
                 }
-                builder = builder.AddJsonFile(item.FileName, optional: false, reloadOnChange: true);
+                builder = builder.AddJsonFile(item.Name, optional: false, reloadOnChange: true);
             }
 
             Configuration = builder.Build();
 
-            var root = builder.Build();
-            var reloadToken = root.GetReloadToken();
-            reloadToken.RegisterChangeCallback(callback =>
-            {
-                Console.WriteLine("Config changed");
-            }, null);
+            //var root = builder.Build();
+            //var reloadToken = root.GetReloadToken();
+            //reloadToken.RegisterChangeCallback(callback =>
+            //{
+            //    Console.WriteLine("Config changed");
+            //}, null);
 
-            ChangeToken.OnChange(() => root.GetReloadToken(), () => Console.WriteLine("Config changed token"));
+            //ChangeToken.OnChange(() => root.GetReloadToken(), () => Console.WriteLine("Config changed token"));
         }
         public static string GetContentRoot()
         {
