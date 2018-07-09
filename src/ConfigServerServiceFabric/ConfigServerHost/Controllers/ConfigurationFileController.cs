@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using ConfigServerHost.Core.Domain;
 using ConfigServerHost.Core.Domain.Query;
-using ConfigServerHost.Core.Handlers.Query;
-using ConfigServerHost.Core.Repository;
+using ConfigServerHost.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ConfigServerHost.Controllers
@@ -11,13 +11,16 @@ namespace ConfigServerHost.Controllers
     [Route("v1")]
     public class ConfigurationFileController : Controller
     {
-        [HttpGet("{application}/{environment}/{version?}")]
-        public async Task<ServiceOperationResult> Get(string application, string environment, string version = "")
+        private readonly IProcessHandlerAsync<QueryConfigurationFileRequest, IEnumerable<ConfigurationFileResponse>> handler;
+        public ConfigurationFileController(IProcessHandlerAsync<QueryConfigurationFileRequest, IEnumerable<ConfigurationFileResponse>> handler)
+        {
+            this.handler = handler;
+        }
+
+        [HttpGet("{application}/{environment}")]
+        public async Task<ServiceOperationResult> Get(string application, string environment)
         {
             //TODO: Validar la version del archivo para no descargar a cada momento
-            //TODO: Compatir archivos para entre aplicaciones, para poner configuraciones comunes
-            var repository = new ConfigurationFileRepository("Data Source=WAEDRMEX01-2861\\SQLEXPRESS;Initial Catalog=ConfigServer;User ID=configserver;Password=configserver");
-            var handler = new QueryConfigurationFileHandler(repository);
             var result = await handler.HandleAsync(new QueryConfigurationFileRequest { ApplicationName = application, Environment = environment });
 
             return ServiceOperationResult.Create(result);

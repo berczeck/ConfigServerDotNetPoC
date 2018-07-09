@@ -29,8 +29,6 @@ namespace ConsoleApp
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
                 .SetBasePath(GetContentRoot())
-                //.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                //.AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
 
             foreach (var item in result.Value)

@@ -13,11 +13,15 @@ namespace ConsoleApp
             {
                 ApplicationConfig.RegisterConfig("API_DEMO", "DEV");
                 var config = ApplicationConfig.Configuration;
-                var section = config.GetSection("application:dataBaseConnection");
 
-                Console.WriteLine(section["pricing"]);
-                Console.WriteLine(section["invoicing"]);
-                Console.WriteLine(config.GetSection("title").Value);
+                var dataBaseSection = config.GetSection("application:dataBaseConnection");
+                Console.WriteLine(dataBaseSection["pricing"]);
+                Console.WriteLine(dataBaseSection["invoicing"]);
+
+                var ftpSection = config.GetSection("application:ftp");
+                Console.WriteLine(ftpSection["server"]);
+                Console.WriteLine(ftpSection["path"]);
+
 
                 Console.WriteLine("Desea continuar?");
                 value = Console.ReadLine();
