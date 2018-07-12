@@ -44,23 +44,16 @@ asdf
 
         function ValidateJson() {
             var text = $(".lined").val();
-
             try {
                 var x = JSON.parse(text);
-
-
             } catch (e) {
-                console.log(e);
-
                 var errorPosition = (e.message.match(/\d./g))[0];
-                var lineNumber1 = text.substring(0, 33);
-                var numberOfLineBreaks = (lineNumber1.match(/\n/g) || []).length + 1;
-                console.log(numberOfLineBreaks);
+                var errorText = text.substring(0, errorPosition);
+                var errorLineNumber = (errorText.match(/\n/g) || []).length + 1;
                 $(".lineno").removeClass("lineselect");
-                $(".lineno[value=" + numberOfLineBreaks + "]").addClass("lineselect");
-                $(".error-message").html("Error de sintaxis en la línea " + numberOfLineBreaks);
+                $(".lineno[value=" + errorLineNumber + "]").addClass("lineselect");
+                $(".error-message").html("Error de sintaxis en la línea " + errorLineNumber);
             }
-
         }
     </script>
 }
