@@ -3,5 +3,65 @@
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
+<link href="~/lib/jquery-linedtextarea/dist/css/jquery-linedtextarea.css" rel="stylesheet" />
+
+
+<div class="row mt-4">
+    <div class="col">
+        <textarea class="lined" rows="35" cols="150">
+{
+  "my" : {
+    "key" : "value"
+asdf
+  }
+}
+</textarea>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col">
+        <div class="btn btn-primary" onclick="ValidateJson();">Validar</div>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col error-message">
+        
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script src="~/lib/jquery-linedtextarea/dist/js/jquery-linedtextarea.js" type="text/javascript"></script>
+
+    <script>
+
+        $(function () {
+            $(".lined").linedtextarea();
+        });
+
+        function ValidateJson() {
+            var text = $(".lined").val();
+
+            try {
+                var x = JSON.parse(text);
+
+
+            } catch (e) {
+                console.log(e);
+
+                var errorPosition = (e.message.match(/\d./g))[0];
+                var lineNumber1 = text.substring(0, 33);
+                var numberOfLineBreaks = (lineNumber1.match(/\n/g) || []).length + 1;
+                console.log(numberOfLineBreaks);
+                $(".lineno").removeClass("lineselect");
+                $(".lineno[value=" + numberOfLineBreaks + "]").addClass("lineselect");
+                $(".error-message").html("Error de sintaxis en la línea " + numberOfLineBreaks);
+            }
+
+        }
+    </script>
+}
 
