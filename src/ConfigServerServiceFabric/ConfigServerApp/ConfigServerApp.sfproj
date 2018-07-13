@@ -32,6 +32,7 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ConfigServerHost.Web\ConfigServerHost.Web.csproj" />
     <ProjectReference Include="..\ConfigServerHost\ConfigServerHost.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
