@@ -1,6 +1,8 @@
-﻿using Microsoft.ServiceFabric.Services.Runtime;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.ServiceFabric.Services.Runtime;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,10 +10,38 @@ namespace ConfigServerHost.Web
 {
     internal static class Program
     {
-        /// <summary>
-        /// This is the entry point of the service host process.
-        /// </summary>
         private static void Main()
+        {
+            if (UseServiceFabric())
+            {
+                StartServiceFabric();
+            }
+            else
+            {
+                StartWebHost();
+            }
+        }
+
+        private static bool UseServiceFabric()
+        {
+            var webHostBuilder = new WebHostBuilder();
+            var environment = webHostBuilder.GetSetting("environment");
+
+            return environment != "Development";
+        }
+
+        private static void StartWebHost()
+        {
+            var builder = new WebHostBuilder()
+                .UseKestrel()
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseStartup<Startup>();
+
+            var host = builder.Build();
+            host.Run();
+        }
+
+        private static void StartServiceFabric()
         {
             try
             {
